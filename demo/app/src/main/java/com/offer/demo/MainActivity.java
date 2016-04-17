@@ -1,52 +1,69 @@
 package com.offer.demo;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.offer.demo.common.utils.SharedPreferencesUtils;
+import com.offer.demo.common.utils.T;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        String userName=SharedPreferencesUtils.getString(getApplicationContext(),"userName");
+        if(StringUtils.isNoneBlank(userName)){
+            Intent intent=new Intent(getApplicationContext(),InfoActivity.class);
+            startActivity(intent);
+            return;
+        }
+        setContentView(R.layout.login);
+
+
+        this.init();
+    }
+
+    private void init(){
+        Button login=(Button)findViewById(R.id.login);
+        final EditText userNameText=(EditText)findViewById(R.id.userName);
+        final EditText passwordText=(EditText)findViewById(R.id.password);
+
+
+        login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                //T.show(getApplicationContext(),"登录", Toast.LENGTH_LONG);
+                String userName=userNameText.getText().toString();
+                String password=passwordText.getText().toString();
+                if(StringUtils.isBlank(userName) || StringUtils.isBlank(password)){
+                    T.show(getApplicationContext(),"用户名或密码不能为空!",Toast.LENGTH_LONG);
+                    return;
+                }
+                //进度条提示
+
+                //http请求验证
+
+
+                //存储信息
+                SharedPreferencesUtils.put(getApplicationContext(),"userName",userName);
+                SharedPreferencesUtils.put(getApplicationContext(),"password",password);
+
+
+                //跳转
+                Intent intent=new Intent(getApplicationContext(),InfoActivity.class);
+                startActivity(intent);
             }
         });
+
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }
