@@ -1,5 +1,6 @@
 package com.offer.demo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,6 +15,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.offer.demo.common.utils.HttpUtils;
 import com.offer.demo.common.utils.L;
+import com.offer.demo.common.utils.NetUtils;
+import com.offer.demo.common.utils.SharedPreferencesUtils;
 import com.offer.demo.common.utils.T;
 import com.offer.demo.pojo.APIResult;
 import com.offer.demo.pojo.User;
@@ -31,12 +34,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-       /* String userName = SharedPreferencesUtils.getString(getApplicationContext(), "userName");
+        String userName = SharedPreferencesUtils.getString(getApplicationContext(), "userName");
         if (StringUtils.isNoneBlank(userName)) {
+            moveTaskToBack(true);
+
             Intent intent = new Intent(getApplicationContext(), InfoActivity.class);
-            startActivity(intent);
-            return;
-        }*/
+            MainActivity.this.startActivity(intent);
+        }
         setContentView(R.layout.login);
 
 
@@ -47,13 +51,21 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            L.i("处理登录返回信息:");
+            //L.i("处理登录返回信息:");
             String result = msg.getData().getString("loginResult");
             try {
                 APIResult<User> apiResult = JSONObject.parseObject(result, new TypeReference<APIResult<User>>() {
                 });
                 if (apiResult.isSuccess()) {
-                    T.show(getApplicationContext(), "登录失败!", Toast.LENGTH_LONG);
+                    //T.show(getApplicationContext(), "登录成功!", Toast.LENGTH_LONG);
+                    //存储信息
+                    User user=apiResult.getData();
+                    SharedPreferencesUtils.put(getApplicationContext(),"userId",user.getId());
+                    SharedPreferencesUtils.put(getApplicationContext(),"userName",user.getUserName());
+
+                    //跳转
+                    Intent intent = new Intent(getApplicationContext(), InfoActivity.class);
+                    MainActivity.this.startActivity(intent);
                 } else {
                     T.show(getApplicationContext(), result, Toast.LENGTH_LONG);
                 }
@@ -72,11 +84,14 @@ public class MainActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //T.show(getApplicationContext(),"登录", Toast.LENGTH_LONG);
                 String userName = userNameText.getText().toString();
                 String password = passwordText.getText().toString();
                 if (StringUtils.isBlank(userName) || StringUtils.isBlank(password)) {
                     T.show(getApplicationContext(), "用户名或密码不能为空!", Toast.LENGTH_LONG);
+                    return;
+                }
+                if (!userName.equals("lance") || !password.equals("123")) {
+                    T.show(getApplicationContext(), "用户名或密码错误!", Toast.LENGTH_LONG);
                     return;
                 }
                 //进度条提示
@@ -86,30 +101,28 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Looper.prepare();
-                        String url = "http://114.55.0.118/index.json";
-                        String result = HttpUtils.get(url);
-                        if (StringUtils.isNoneBlank(result)) {
-                            L.i("返回结果:" + result);
+                        if (NetUtils.isConnected(getApplicationContext())) {
+                            String url = "http://114.55.0.118/index.json";
+                            String result = HttpUtils.get(url);
+                            if (StringUtils.isNoneBlank(result)) {
+                                L.i("返回结果:" + result);
 
-                            Bundle bundle = new Bundle();
-                            bundle.putString("loginResult", result);
+                                Bundle bundle = new Bundle();
+                                bundle.putString("loginResult", result);
 
-                            Message message = new Message();
-                            message.setData(bundle);
-                            loginHandler.sendMessage(message);
+                                Message message = new Message();
+                                message.setData(bundle);
+                                loginHandler.sendMessage(message);
+                            } else {
+                                T.show(getApplicationContext(), "返回结果22:", Toast.LENGTH_LONG);
+                            }
+
                         } else {
-                            T.show(getApplicationContext(), "返回结果22:", Toast.LENGTH_LONG);
+                            T.show(getApplicationContext(), "网络不可用", Toast.LENGTH_LONG);
                         }
+                        Looper.loop();
                     }
                 });
-             /*   //存储信息
-                SharedPreferencesUtils.put(getApplicationContext(), "userName", userName);
-                SharedPreferencesUtils.put(getApplicationContext(), "password", password);
-
-
-                //跳转
-                Intent intent = new Intent(getApplicationContext(), InfoActivity.class);
-                startActivity(intent);*/
             }
         });
 

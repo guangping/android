@@ -125,8 +125,8 @@ public class HttpUtils {
                     con = (HttpURLConnection) new URL(url).openConnection();
                     con.setReadTimeout(TIME_OUT);
                     con.setConnectTimeout(TIME_OUT);
-                    con.setDoInput(true);
-                    con.setDoOutput(true);
+                    //con.setDoInput(true);
+                    //con.setDoOutput(true);
                     con.setRequestMethod("GET");
                     con.setRequestProperty("connection", "Keep-Alive");
                     con.setRequestProperty("Charsert", "UTF-8");
