@@ -36,10 +36,9 @@ public class MainActivity extends AppCompatActivity {
 
         String userName = SharedPreferencesUtils.getString(getApplicationContext(), "userName");
         if (StringUtils.isNoneBlank(userName)) {
-            moveTaskToBack(true);
-
             Intent intent = new Intent(getApplicationContext(), InfoActivity.class);
             MainActivity.this.startActivity(intent);
+            MainActivity.this.finish();
         }
         setContentView(R.layout.login);
 
