@@ -41,8 +41,6 @@ public class MainActivity extends AppCompatActivity {
             MainActivity.this.finish();
         }
         setContentView(R.layout.login);
-
-
         this.init();
     }
 
