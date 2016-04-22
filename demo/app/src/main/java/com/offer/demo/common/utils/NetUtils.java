@@ -25,18 +25,31 @@ public class NetUtils {
      * @return
      */
     public static boolean isConnected(Context context) {
-
         ConnectivityManager connectivity = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
-
         if (null != connectivity) {
-
             NetworkInfo info = connectivity.getActiveNetworkInfo();
             if (null != info && info.isConnected()) {
                 if (info.getState() == NetworkInfo.State.CONNECTED) {
                     return true;
                 }
             }
+        }
+        return false;
+    }
+
+    /**
+     * 判断网络是否可用
+     *
+     * @param context
+     * @return
+     */
+    public static boolean isAvailable(Context context) {
+        ConnectivityManager connectivity = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (null != connectivity) {
+            NetworkInfo info = connectivity.getActiveNetworkInfo();
+            return (info != null && info.isAvailable());
         }
         return false;
     }
@@ -51,7 +64,19 @@ public class NetUtils {
         if (cm == null)
             return false;
         return cm.getActiveNetworkInfo().getType() == ConnectivityManager.TYPE_WIFI;
+    }
 
+    public static boolean isWifiAvailable(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (cm != null) {
+            //ConnectivityManager.TYPE_MOBILE
+            if (cm.getActiveNetworkInfo().getType() == ConnectivityManager.TYPE_WIFI) {
+                return cm.getActiveNetworkInfo().isAvailable();
+            }
+        }
+        return false;
     }
 
     /**
