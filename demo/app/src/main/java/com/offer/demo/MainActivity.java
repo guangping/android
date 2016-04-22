@@ -13,11 +13,11 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import com.offer.demo.common.utils.HttpUtils;
 import com.offer.demo.common.utils.L;
 import com.offer.demo.common.utils.NetUtils;
 import com.offer.demo.common.utils.SharedPreferencesUtils;
 import com.offer.demo.common.utils.T;
+import com.offer.demo.common.utils.http.OKHttpUtils;
 import com.offer.demo.pojo.APIResult;
 import com.offer.demo.pojo.User;
 
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                         Looper.prepare();
                         if (NetUtils.isConnected(getApplicationContext())) {
                             String url = "http://114.55.0.118/index.json";
-                            String result = HttpUtils.get(url);
+                            String result = OKHttpUtils.get(url);
                             if (StringUtils.isNoneBlank(result)) {
                                 L.i("返回结果:" + result);
 

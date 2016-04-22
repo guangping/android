@@ -27,11 +27,9 @@ public class OKHttpUtils {
     /**
      * http get请求
      */
-    public static HttpResponse get(String url) {
-        HttpResponse resultResponse = new HttpResponse();
+    public static String get(String url) {
         if (StringUtils.isBlank(url)) {
-            resultResponse.setHttpMsg(HttpMsg.URL_ERROR);
-            return resultResponse;
+            return null;
         }
         try {
             OkHttpClient client = new OkHttpClient();
@@ -39,14 +37,13 @@ public class OKHttpUtils {
             Response response = client.newCall(request).execute();
             if (!response.isSuccessful()) {
                 String result = getMsg(response.body().byteStream());
-                resultResponse.setMsg(result);
-                resultResponse.setHttpMsg(HttpMsg.SUCCESS);
+                return result;
             }
         } catch (Exception e) {
-            resultResponse.setMsg(e.getMessage());
+
             e.printStackTrace();
         }
-        return resultResponse;
+        return null;
     }
 
     /**
