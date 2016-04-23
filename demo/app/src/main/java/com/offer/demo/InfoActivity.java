@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
-import com.offer.demo.common.utils.SharedPreferencesUtils;
+import com.common.utils.SharedPreferencesUtils;
 
 import org.apache.commons.lang3.StringUtils;
 

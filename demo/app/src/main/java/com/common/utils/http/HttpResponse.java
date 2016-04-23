@@ -1,4 +1,4 @@
-package com.offer.demo.common.utils.http;
+package com.common.utils.http;
 
 import java.io.Serializable;
 

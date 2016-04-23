@@ -1,4 +1,4 @@
-package com.offer.demo.common.utils;
+package com.common.utils;
 
 import android.content.Context;
 import android.widget.Toast;

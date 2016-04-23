@@ -13,11 +13,11 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import com.offer.demo.common.utils.L;
-import com.offer.demo.common.utils.NetUtils;
-import com.offer.demo.common.utils.SharedPreferencesUtils;
-import com.offer.demo.common.utils.T;
-import com.offer.demo.common.utils.http.OKHttpUtils;
+import com.common.utils.L;
+import com.common.utils.NetUtils;
+import com.common.utils.SharedPreferencesUtils;
+import com.common.utils.T;
+import com.common.utils.http.OKHttpUtils;
 import com.offer.demo.pojo.APIResult;
 import com.offer.demo.pojo.User;
 
