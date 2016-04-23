@@ -22,7 +22,6 @@ android {
 dependencies {
     compile(
             fileTree(dir: 'libs', include: ['*.jar']),
-            'com.android.support:appcompat-v7:23.3.0',
             'com.android.support:design:23.3.0',
             'com.android.support:appcompat-v7:23.3.0',
             'com.alibaba:fastjson:1.2.8',
