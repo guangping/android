@@ -1,6 +1,7 @@
 package com.offer.demo;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,13 +31,15 @@ public class MainActivity extends Activity {
 
     private ExecutorService es = Executors.newFixedThreadPool(5);
 
+    private ProgressDialog dialog=null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String userName = SharedPreferencesUtils.getString(getApplicationContext(), "userName");
+        String userName = SharedPreferencesUtils.getString(MainActivity.this, "userName");
         if (StringUtils.isNoneBlank(userName)) {
-            Intent intent = new Intent(getApplicationContext(), InfoActivity.class);
+            Intent intent = new Intent(MainActivity.this, InfoActivity.class);
             MainActivity.this.startActivity(intent);
             MainActivity.this.finish();
         }
@@ -48,6 +51,7 @@ public class MainActivity extends Activity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            dialog.dismiss();
             //L.i("处理登录返回信息:");
             String result = msg.getData().getString("loginResult");
             try {
@@ -57,12 +61,13 @@ public class MainActivity extends Activity {
                     //T.show(getApplicationContext(), "登录成功!", Toast.LENGTH_LONG);
                     //存储信息
                     User user=apiResult.getData();
-                    SharedPreferencesUtils.put(getApplicationContext(),"userId",user.getId());
-                    SharedPreferencesUtils.put(getApplicationContext(),"userName",user.getUserName());
+                    SharedPreferencesUtils.put(MainActivity.this,"userId",user.getId());
+                    SharedPreferencesUtils.put(MainActivity.this,"userName",user.getUserName());
 
                     //跳转
-                    Intent intent = new Intent(getApplicationContext(), InfoActivity.class);
+                    Intent intent = new Intent(MainActivity.this, InfoActivity.class);
                     MainActivity.this.startActivity(intent);
+                    finish();
                 } else {
                     T.show(getApplicationContext(), result, Toast.LENGTH_LONG);
                 }
@@ -92,13 +97,14 @@ public class MainActivity extends Activity {
                     return;
                 }
                 //进度条提示
+                dialog= ProgressDialog.show(MainActivity.this,"","loadding");
 
                 //http请求验证
                 es.execute(new Runnable() {
                     @Override
                     public void run() {
                         Looper.prepare();
-                        if (NetUtils.isConnected(getApplicationContext())) {
+                        if (NetUtils.isConnected(MainActivity.this)) {
                             String url = "http://114.55.0.118/index.json";
                             String result = OKHttpUtils.get(url);
                             if (StringUtils.isNoneBlank(result)) {
