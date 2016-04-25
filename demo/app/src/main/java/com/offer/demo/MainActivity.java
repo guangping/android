@@ -27,11 +27,15 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements View.OnClickListener {
 
     private ExecutorService es = Executors.newFixedThreadPool(5);
 
-    private ProgressDialog dialog=null;
+    private ProgressDialog dialog = null;
+
+    private EditText userNameText = null;
+
+    private EditText passwordText = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +64,9 @@ public class MainActivity extends Activity {
                 if (apiResult.isSuccess()) {
                     //T.show(getApplicationContext(), "登录成功!", Toast.LENGTH_LONG);
                     //存储信息
-                    User user=apiResult.getData();
-                    SharedPreferencesUtils.put(MainActivity.this,"userId",user.getId());
-                    SharedPreferencesUtils.put(MainActivity.this,"userName",user.getUserName());
+                    User user = apiResult.getData();
+                    SharedPreferencesUtils.put(MainActivity.this, "userId", user.getId());
+                    SharedPreferencesUtils.put(MainActivity.this, "userName", user.getUserName());
 
                     //跳转
                     Intent intent = new Intent(MainActivity.this, InfoActivity.class);
@@ -79,57 +83,75 @@ public class MainActivity extends Activity {
 
     private void init() {
         Button login = (Button) findViewById(R.id.login);
-        final EditText userNameText = (EditText) findViewById(R.id.userName);
-        final EditText passwordText = (EditText) findViewById(R.id.password);
+        userNameText = (EditText) findViewById(R.id.userName);
+        passwordText = (EditText) findViewById(R.id.password);
+
+        login.setOnClickListener(this);
 
 
-        login.setOnClickListener(new View.OnClickListener() {
+    /*
+      方法一
+      login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String userName = userNameText.getText().toString();
-                String password = passwordText.getText().toString();
-                if (StringUtils.isBlank(userName) || StringUtils.isBlank(password)) {
-                    T.show(getApplicationContext(), "用户名或密码不能为空!", Toast.LENGTH_LONG);
-                    return;
-                }
-                if (!userName.equals("lance") || !password.equals("123")) {
-                    T.show(getApplicationContext(), "用户名或密码错误!", Toast.LENGTH_LONG);
-                    return;
-                }
-                //进度条提示
-                dialog= ProgressDialog.show(MainActivity.this,"","loadding");
 
-                //http请求验证
-                es.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        Looper.prepare();
-                        if (NetUtils.isConnected(MainActivity.this)) {
-                            String url = "http://114.55.0.118/index.json";
-                            String result = OKHttpUtils.get(url);
-                            if (StringUtils.isNoneBlank(result)) {
-                                L.i("返回结果:" + result);
-
-                                Bundle bundle = new Bundle();
-                                bundle.putString("loginResult", result);
-
-                                Message message = new Message();
-                                message.setData(bundle);
-                                loginHandler.sendMessage(message);
-                            } else {
-                                T.show(getApplicationContext(), "返回结果22:", Toast.LENGTH_LONG);
-                            }
-
-                        } else {
-                            T.show(getApplicationContext(), "网络不可用", Toast.LENGTH_LONG);
-                        }
-                        Looper.loop();
-                    }
-                });
             }
-        });
+        });*/
 
     }
 
+    private void login() {
+        String userName = userNameText.getText().toString();
+        String password = passwordText.getText().toString();
+        if (StringUtils.isBlank(userName) || StringUtils.isBlank(password)) {
+            T.show(getApplicationContext(), "用户名或密码不能为空!", Toast.LENGTH_LONG);
+            return;
+        }
+        if (!userName.equals("lance") || !password.equals("123")) {
+            T.show(getApplicationContext(), "用户名或密码错误!", Toast.LENGTH_LONG);
+            return;
+        }
+        //进度条提示
+        dialog = ProgressDialog.show(MainActivity.this, "", "loadding");
 
+        //http请求验证
+        es.execute(new Runnable() {
+            @Override
+            public void run() {
+                Looper.prepare();
+                if (NetUtils.isConnected(MainActivity.this)) {
+                    String url = "http://114.55.0.118/index.json";
+                    String result = OKHttpUtils.get(url);
+                    if (StringUtils.isNoneBlank(result)) {
+                        L.i("返回结果:" + result);
+
+                        Bundle bundle = new Bundle();
+                        bundle.putString("loginResult", result);
+
+                        Message message = new Message();
+                        message.setData(bundle);
+                        loginHandler.sendMessage(message);
+                    } else {
+                        T.show(getApplicationContext(), "返回结果22:", Toast.LENGTH_LONG);
+                    }
+
+                } else {
+                    T.show(getApplicationContext(), "网络不可用", Toast.LENGTH_LONG);
+                }
+                Looper.loop();
+            }
+        });
+    }
+
+
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        switch (id) {
+            case R.id.login:
+                login();
+            default:
+        }
+
+    }
 }
