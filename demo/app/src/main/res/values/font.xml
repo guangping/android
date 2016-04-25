@@ -1,2 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="size_10">10sp</string>
+    <string name="size_12">12sp</string>
+    <string name="size_15">15sp</string>
+    <string name="size_16">16sp</string>
+    <string name="size_20">20sp</string>
+    <string name="size_25">25sp</string>
+</resources>
